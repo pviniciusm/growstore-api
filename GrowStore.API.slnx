@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/GrowStore.API/GrowStore.API.csproj" />
+  <Project Path="src/GrowStore.Application/GrowStore.Application.csproj" />
+  <Project Path="src/GrowStore.Domain/GrowStore.Domain.csproj" />
+  <Project Path="src/GrowStore.Infrastructure/GrowStore.Infrastructure.csproj" />
+</Solution>

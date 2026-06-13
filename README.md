@@ -48,7 +48,7 @@ Durante o desenvolvimento, todas as funcionalidades e decisões arquiteturais fo
 
 ### 🗄 Banco de Dados
 
-* PostgreSQL/SQL Server
+* SQL Server
 
 ### 🔐 Segurança
 

@@ -30,10 +30,8 @@ Este projeto foi desenvolvido considerando os critérios definidos no desafio t�
 | 📖 Documentação              | **5%**  | Qualidade do README, Swagger/OpenAPI e organização do repositório.                              |
 | 🎯 Apresentação              | **5%**  | Clareza na demonstração das funcionalidades e das decisões técnicas adotadas.  
 
-## 📁 Project Structure
 
-# Estrutura de Pastas - GrowStore
-    ## 📁 Project Structure
+# 📁 Estrutura de Pastas - GrowStore
 
 ```text
 GrowStore/
@@ -55,14 +53,11 @@ GrowStore/
 └── README.md
 ```
 
-
 ### 📌 Observação
 
 Durante o desenvolvimento, todas as funcionalidades e decisões arquiteturais foram planejadas com base nesses critérios, buscando garantir qualidade, organização, segurança e aderência às boas práticas de desenvolvimento Back-End.
 
-
 ## 🛠 Tecnologias Utilizadas
-
 ### 🔹 Back-End
 
 * C#
@@ -154,9 +149,106 @@ Durante o desenvolvimento da API GrowStore foram elaborados diagramas para auxil
 | 🎭 Diagrama de Casos de Uso         | Representação das interações entre usuários e funcionalidades do sistema.          | [Visualizar](https://drive.google.com/file/d/1eheFZk7SeDogCvrKj-yLddsR5xnrPmp-/view?usp=sharing) |
 
 
+## 📝 Guia de Commits Semânticos
+### ⚠️ Importante
+
+* Não criar Pull Requests (PRs) diretamente para a branch `main`.
+* Todos os Pull Requests devem ser direcionados para a branch `develop`.
+* Não aprovar o próprio Pull Request.
+* Todo Pull Request deve ser revisado por pelo menos um membro da equipe antes do merge.
+
+### Formato
+
+```text
+<type>(<scope>): <description>
+```
+
+### Exemplos
+
+```text
+feat(account): create account service
+fix(product): correct stock validation
+docs(readme): update installation guide
+chore(application): create folder structure
+refactor(order): simplify order creation logic
+test(account): add account service unit tests
+```
+
+### Tipos de Commit
+
+| Tipo       | Descrição                                                                                            |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| `feat`     | Adiciona uma nova funcionalidade ao sistema                                                          |
+| `fix`      | Corrige um bug ou comportamento incorreto                                                            |
+| `docs`     | Altera documentação (README, Wiki, comentários, etc.)                                                |
+| `style`    | Ajustes de formatação sem alterar a lógica do código (indentação, espaços, organização visual)       |
+| `refactor` | Reestrutura ou melhora o código sem alterar seu comportamento                                        |
+| `perf`     | Melhora o desempenho da aplicação                                                                    |
+| `test`     | Adiciona ou atualiza testes automatizados                                                            |
+| `build`    | Altera dependências, pacotes ou configuração de build                                                |
+| `ci`       | Altera processos de Integração Contínua e Entrega Contínua (CI/CD)                                   |
+| `chore`    | Tarefas de manutenção, configuração ou organização do projeto sem impacto direto nas funcionalidades |
+
+### Exemplos Práticos
+
+#### Nova funcionalidade
+
+```text
+feat(account): create account service
+```
+
+#### Correção de bug
+
+```text
+fix(cart): correct total price calculation
+```
+
+#### Documentação
+
+```text
+docs(readme): add project structure section
+```
+
+#### Estrutura do projeto
+
+```text
+chore(application): create application layer structure
+```
+
+#### Refatoração
+
+```text
+refactor(product): simplify product validation
+```
+
+#### Testes
+
+```text
+test(account): add account service unit tests
+```
+
+### Escopos Sugeridos
+
+```text
+account
+address
+product
+category
+cart
+order
+payment
+auth
+application
+domain
+infrastructure
+api
+readme
+```
+
+
+
 ### 🚧 Status do Projeto
 
 O desenvolvimento da API GrowStore encontra-se em andamento. As funcionalidades estão sendo implementadas gradualmente seguindo os requisitos propostos no desafio, com foco em qualidade de código, boas práticas de arquitetura, segurança e escalabilidade.
 
 As tabelas de acompanhamento presentes neste repositório são atualizadas conforme cada requisito é concluído, permitindo acompanhar a evolução do projeto de forma transparente.
-

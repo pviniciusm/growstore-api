@@ -9,27 +9,34 @@ namespace GrowStore.Domain.Entities
             //Necessário para EF
         }
 
-        private User (string name, string email, UserRole role)
+        private User (string name, string cpf, DateTime birthDate, UserRole role)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new DomainException("Name is required.");
             }
 
-            if (string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(cpf))
             {
-                throw new DomainException("Email is required.");
+                throw new DomainException("Cpf is required.");
+            }
+
+            if (birthDate == DateTime.MinValue)
+            {
+                throw new DomainException("BirthDate is required.");
             }
 
             if (!Enum.IsDefined(typeof(UserRole), role)) throw new DomainException("Invalid role.");
 
             Name = name;
-            Email = email;
+            Cpf = cpf;
+            BirthDate = birthDate;
             Role = role;
         }
         public Guid Id { get; private set; }
         public string Name { get; private set; } = string.Empty;
-        public string Email { get; private set; } = string.Empty;
+        public string Cpf { get; private set; } = string.Empty;
+        public DateTime BirthDate { get; private set; }
         public UserRole Role { get; private set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime UpdateAt { get; private set; }

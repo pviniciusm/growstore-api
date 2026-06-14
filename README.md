@@ -28,7 +28,33 @@ Este projeto foi desenvolvido considerando os critérios definidos no desafio t�
 | 🗄 Banco de Dados            | **15%** | Modelagem adequada, migrations, relacionamentos e consultas corretas.                           |
 | 🧪 Testes Automatizados      | **10%** | Cobertura e qualidade dos testes unitários.                                                     |
 | 📖 Documentação              | **5%**  | Qualidade do README, Swagger/OpenAPI e organização do repositório.                              |
-| 🎯 Apresentação              | **5%**  | Clareza na demonstração das funcionalidades e das decisões técnicas adotadas.                   |
+| 🎯 Apresentação              | **5%**  | Clareza na demonstração das funcionalidades e das decisões técnicas adotadas.  
+
+## 📁 Project Structure
+
+# Estrutura de Pastas - GrowStore
+    ## 📁 Project Structure
+
+```text
+GrowStore/
+├── src/
+│   ├── GrowStore.API/             # ASP.NET Core Web API
+|       ├── Auth
+|       ├── Controller
+│   ├── GrowStore.Application/     # Use Cases, Services, DTOs and Contracts
+|       ├── DTOs
+|       ├── Interfaces
+|       ├── Services
+│   ├── GrowStore.Domain/          # Entities, Enums, Value Objects and Repository Interfaces
+|       ├── Entities
+|       ├── Interfaces
+|       ├── Shared
+│   └── GrowStore.Infrastructure/  # Data Access, Repository Implementations and External Services
+|       ├── Data
+|       ├── Repositories
+└── README.md
+```
+
 
 ### 📌 Observação
 
@@ -48,7 +74,7 @@ Durante o desenvolvimento, todas as funcionalidades e decisões arquiteturais fo
 
 ### 🗄 Banco de Dados
 
-* PostgreSQL/SQL Server
+* SQL Server
 
 ### 🔐 Segurança
 

@@ -5,10 +5,15 @@ namespace GrowStore.Infrastructure.Repositories;
 
 public class MockUserRepository : IUserRepository
 {
-    private static readonly List<User> _users = [];
+    private readonly List<User> _users = [];
 
     public Task AddAsync(User user)
     {
+        if (_users.Any(x => x.Id == user.Id))
+        {
+            throw new InvalidOperationException("User already exists.");
+        }
+
         _users.Add(user);
 
         return Task.CompletedTask;

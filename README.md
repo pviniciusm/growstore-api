@@ -147,6 +147,7 @@ Durante o desenvolvimento da API GrowStore foram elaborados diagramas para auxil
 | 📦 Diagrama de Classes              | Representação das entidades do sistema, seus atributos, métodos e relacionamentos. | [Visualizar](https://drive.google.com/file/d/1Qi9HGSDAyXAxpbs1Xzoj-64lgRuUs0ZC/view)             |
 | 🗄 Diagrama de Relacionamento (DER) | Modelagem do banco de dados e relacionamentos entre tabelas.                       | [Visualizar](https://drive.google.com/file/d/1sqXaFEx4V_c9VBCbBvxw7ojnmNyd4hLC/view?usp=sharing) |
 | 🎭 Diagrama de Casos de Uso         | Representação das interações entre usuários e funcionalidades do sistema.          | [Visualizar](https://drive.google.com/file/d/1eheFZk7SeDogCvrKj-yLddsR5xnrPmp-/view?usp=sharing) |
+| 🌐 Padrão de Respostas HTTP         | Guia de uso do padrão `Result`, `Error`, `ProblemDetails` e mapeamento HTTP.       | [Visualizar](docs/http-response-pattern.md)                                                       |
 
 
 ## 📝 Guia de Commits Semânticos

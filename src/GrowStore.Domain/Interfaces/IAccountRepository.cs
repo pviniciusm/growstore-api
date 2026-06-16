@@ -6,7 +6,7 @@ public interface IAccountRepository
 {
     Task AddAsync(Account account);
     Task<Account?> GetByEmailAsync(string email);
-    task<Account?> GetByIdAsync(Guid accountId);
+    Task<Account?> GetByIdAsync(Guid accountId);
     Task<bool> EmailExistsAsync(string email);
     Task UpdateAsync(Account account);
     Task DeleteAsync(Guid accountId);

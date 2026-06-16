@@ -1,8 +1,8 @@
-﻿using GrowStore.Application.Users.DTOs;
+﻿using GrowStore.Application.Shared.Exceptions;
+using GrowStore.Application.Users.DTOs;
 using GrowStore.Application.Users.Interfaces;
 using GrowStore.Domain.Entities;
 using GrowStore.Domain.Interfaces;
-using GrowStore.Domain.Shared.Exceptions;
 
 namespace GrowStore.Application.Users.Services
 {

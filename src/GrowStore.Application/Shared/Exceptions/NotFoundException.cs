@@ -1,4 +1,4 @@
-﻿namespace GrowStore.Domain.Shared.Exceptions
+﻿namespace GrowStore.Application.Shared.Exceptions
 {
     public class NotFoundException : Exception
     {

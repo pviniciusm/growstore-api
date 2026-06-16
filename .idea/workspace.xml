@@ -56,6 +56,7 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/GrowStore.Application/Address/DTOs/CreateAddressDto.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/GrowStore.Application/Address/DTOs/ResponseAddressDto.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/GrowStore.Application/Address/DTOs/UpdateAddressDto.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/GrowStore.Application/Users/DTOs/CreateUserDto.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/GrowStore.Application/Users/DTOs/ResponseUserDto.cs" root0="SKIP_HIGHLIGHTING" />
@@ -108,7 +109,7 @@
       <workItem from="1781546778912" duration="426000" />
       <workItem from="1781547307530" duration="715000" />
       <workItem from="1781548073517" duration="467000" />
-      <workItem from="1781548580108" duration="799000" />
+      <workItem from="1781548580108" duration="1646000" />
     </task>
     <servers />
   </component>

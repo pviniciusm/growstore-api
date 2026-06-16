@@ -3,4 +3,5 @@
   <Project Path="src/GrowStore.Application/GrowStore.Application.csproj" />
   <Project Path="src/GrowStore.Domain/GrowStore.Domain.csproj" />
   <Project Path="src/GrowStore.Infrastructure/GrowStore.Infrastructure.csproj" />
+  <Project Path="src/Growstore.Tests/Growstore.Tests.csproj" Id="308aeb2d-76d7-4781-acdf-ee6290d7945f" />
 </Solution>

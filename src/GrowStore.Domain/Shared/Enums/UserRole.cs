@@ -1,4 +1,4 @@
-namespace GrowStore.Domain.Shared;
+namespace GrowStore.Domain.Shared.Enums;
 
 public enum UserRole
 {

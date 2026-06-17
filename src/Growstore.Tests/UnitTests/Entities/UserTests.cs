@@ -3,7 +3,7 @@ using GrowStore.Domain.Entities;
 using GrowStore.Domain.Shared.Enums;
 using GrowStore.Domain.Shared.Exceptions;
 
-namespace Growstore.Tests.UnitTests.Entitiestest:
+namespace Growstore.Tests.UnitTests.Entities
 {
     public class UserTests
     {

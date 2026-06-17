@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GrowStore.Application\GrowStore.Application.csproj" />
+    <ProjectReference Include="..\GrowStore.Infrastructure\GrowStore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

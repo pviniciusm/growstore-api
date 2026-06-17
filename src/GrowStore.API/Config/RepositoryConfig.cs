@@ -1,4 +1,5 @@
 ﻿using GrowStore.Domain.Interfaces;
+using GrowStore.Infrastructure.Repositories;
 
 namespace GrowStore.API.Config
 {
@@ -6,7 +7,7 @@ namespace GrowStore.API.Config
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRepository, MockUserRepository>();
 
             return services;
         }

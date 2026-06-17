@@ -1,5 +1,6 @@
 using System;
 using GrowStore.Domain.Shared;
+using GrowStore.Domain.Shared.Enums;
 
 namespace GrowStore.Application.Accounts.DTOs;
 

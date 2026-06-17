@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GrowStore.Domain.Shared;
 
 namespace Growstore.Tests.UnitTests.Entities
 {
@@ -13,7 +14,7 @@ namespace Growstore.Tests.UnitTests.Entities
             var name = "John Doe";
             var cpf = "123.456.789-00";
             var birthDate = new DateTime(1990, 1, 1);
-            var role = UserRole.Customer;
+            var role = UserRole.CUSTOMER;
 
             // Act: executa o factory method que cria o usuário
             var user = User.Create(name, cpf, birthDate, role);

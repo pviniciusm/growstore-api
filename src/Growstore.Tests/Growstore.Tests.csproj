@@ -22,4 +22,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GrowStore.Application\GrowStore.Application.csproj" />
+    <ProjectReference Include="..\GrowStore.Domain\GrowStore.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

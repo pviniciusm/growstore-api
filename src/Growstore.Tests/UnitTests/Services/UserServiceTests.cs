@@ -1,4 +1,9 @@
 ﻿using FluentAssertions;
+using GrowStore.Application.Users.DTOs;
+using GrowStore.Application.Users.Services;
+using GrowStore.Domain.Entities;
+using GrowStore.Domain.Interfaces;
+using GrowStore.Domain.Shared.Enums;
 using Moq;
 
 namespace Growstore.Tests.UnitTests.Services
@@ -26,7 +31,7 @@ namespace Growstore.Tests.UnitTests.Services
                 Name = "John Doe",
                 Cpf = "123.456.789-00",
                 BirthDate = new DateTime(1990, 1, 1),
-                Role = UserRole.Customer
+                Role = UserRole.CUSTOMER
             };
 
             // It.IsAny<User>(): aceita qualquer instância de User passada para o AddAsync

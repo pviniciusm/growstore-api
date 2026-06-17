@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
-using GrowStore.Domain.Shared;
+using GrowStore.Domain.Entities;
+using GrowStore.Domain.Shared.Enums;
 
 namespace Growstore.Tests.UnitTests.Entities
 {

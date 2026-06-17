@@ -1,4 +1,4 @@
-using GrowStore.Domain.Entities;
+using GrowStore.Domain.Entities.Accounts;
 
 namespace GrowStore.Domain.Interfaces;
 

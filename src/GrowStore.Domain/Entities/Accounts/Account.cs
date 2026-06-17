@@ -1,3 +1,5 @@
+using GrowStore.Domain.Shared;
+
 namespace GrowStore.Domain.Entities.Accounts;
     public class Account
 {

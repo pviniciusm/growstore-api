@@ -1,33 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GrowStore.Domain.Interfaces;
+using GrowStore.Application.Auth.Interfaces;
 
 namespace GrowStore.Application.Auth.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
-        private readonly IAccountRepository _accountRepository;
+        //private readonly IAccountRepository _accountRepository;
 
-        public AuthService(IAccountRepository accountRepository)
+        public AuthService(/*IAccountRepository accountRepository*/)
         {
-            _accountRepository = accountRepository;
+            //_accountRepository = accountRepository;
         }
 
         public async Task<string> LoginAsync(string email, string password)
         {
-        
-        //var account = await _accountRepository.GetAccountByEmailAsync(email);
+            //var account = await _accountRepository.GetByEmailAsync(email);
 
-        // if (account is null)
-        //     throw new UnauthorizedAccessException();
+            //if (account is null)
+            //{
+            //    throw new UnauthorizedAccessException();
+            //}
+
             return "token";
         }
 
         public async Task<string> GenerateTestToken()
         {
-            // Implementação
             return "test-token";
         }
     }

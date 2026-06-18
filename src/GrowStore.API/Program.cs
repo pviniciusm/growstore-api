@@ -1,4 +1,5 @@
 using GrowStore.API.Config;
+using GrowStore.Application.Auth.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddApplicationServices();
 builder.Services.AddRepositories();
 

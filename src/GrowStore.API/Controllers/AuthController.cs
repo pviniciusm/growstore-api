@@ -7,11 +7,11 @@ namespace GrowStore.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly ITokenService _tokenService;
 
-        public AccountController(ITokenService tokenService)
+        public AuthController(ITokenService tokenService)
         {
             _tokenService = tokenService;
         }

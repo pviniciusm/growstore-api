@@ -1,7 +1,10 @@
 ﻿using GrowStore.Application.Auth.DTOs;
 using GrowStore.Application.Auth.Interfaces;
 using GrowStore.Domain.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace GrowStore.API.Controllers
 {
@@ -30,5 +33,25 @@ namespace GrowStore.API.Controllers
             var token = await _tokenService.GenerateToken(dto);
             return Ok(new { token });
         }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            var accountId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = User.FindFirstValue("userId");
+            var email = User.FindFirstValue(JwtRegisteredClaimNames.Email);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            return Ok(new { accountId, userId, email, role });
+        }
+
+        [Authorize(Roles = "CUSTOMER")]
+        [HttpGet("customer-only")]
+        public IActionResult CustomerOnly() => Ok(new { message = "Customer access granted" });
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnly() => Ok(new { message = "Admin access granted" });
     }
 }

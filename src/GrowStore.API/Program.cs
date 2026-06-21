@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddRepositories();
+builder.Services.AddScoped<GrowStore.Application.Accounts.AccountService>();
 
 var app = builder.Build();
 

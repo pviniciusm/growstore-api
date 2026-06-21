@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddRepositories();
+builder.Services.AddScoped<IAddressRepository, AddressRepositoryMock>();
 
 var app = builder.Build();
 

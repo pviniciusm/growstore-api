@@ -1,5 +1,8 @@
 using GrowStore.API.Config;
 
+using GrowStore.Domain.Interfaces;           
+using GrowStore.Infrastructure.Repositories; 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

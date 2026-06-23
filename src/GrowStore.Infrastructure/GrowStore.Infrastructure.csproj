@@ -10,4 +10,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GrowStore.Domain\GrowStore.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

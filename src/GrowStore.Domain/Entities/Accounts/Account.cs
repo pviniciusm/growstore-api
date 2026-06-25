@@ -24,10 +24,10 @@ public class Account
             throw new DomainException("Email is required.");
         if (string.IsNullOrWhiteSpace(password))
             throw new DomainException("Password is required.");
+
         Id = Guid.NewGuid();
         UserId = userId;
         Email = email;
         Password = password;
-
     }
 }

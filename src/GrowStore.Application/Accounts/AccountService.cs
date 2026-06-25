@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using GrowStore.Application.Accounts.DTOs; 
+using GrowStore.Application.Accounts.Interfaces; 
 
 namespace GrowStore.Application.Accounts;
 
-public class AccountService
+public class AccountService : IAccountService
 {
     public AccountService()
     {

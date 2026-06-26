@@ -1,4 +1,5 @@
 using GrowStore.API.Config;
+using GrowStore.Domain.Shared.Exceptions;
 using GrowStore.API.Middlewares;
 using GrowStore.Application.Auth.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

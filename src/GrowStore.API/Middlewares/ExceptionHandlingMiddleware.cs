@@ -1,4 +1,5 @@
 using GrowStore.Domain.Shared;
+using GrowStore.Domain.Shared.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GrowStore.API.Middlewares;

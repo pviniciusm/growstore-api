@@ -11,6 +11,8 @@ namespace GrowStore.API.Config
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

@@ -6,4 +6,4 @@ riderModule.iml
 .vs/
 TestResults/
 *.coverage
-*.coveragexml
+*.coveragexml.env

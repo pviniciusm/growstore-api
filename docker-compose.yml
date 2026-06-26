@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  growstore-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: growstore-sqlserver-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=GrowPassword123!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - growstore_sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "GrowPassword123!", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - growstore-network
+
+  growstore-api:
+    image: growstore-api:latest
+    container_name: growstore-dotnet-api
+    build:
+      context: .
+      dockerfile: src/GrowStore.API/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=growstore-db;Database=GrowStoreDb;User Id=sa;Password=GrowPassword123!;TrustServerCertificate=True;
+    depends_on:
+      growstore-db:
+        condition: service_healthy
+    networks:
+      - growstore-network
+
+volumes:
+  growstore_sql_data:
+
+networks:
+  growstore-network:
+    driver: bridge

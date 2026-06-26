@@ -1,4 +1,4 @@
-using GrowStore.Domain.Entities.Addresses; 
+using GrowStore.Domain.Entities;
 using GrowStore.Domain.Interfaces;
 
 namespace GrowStore.Infrastructure.Repositories;

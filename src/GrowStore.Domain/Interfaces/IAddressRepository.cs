@@ -1,12 +1,9 @@
-using GrowStore.Domain.Entities.Addresses;
+using GrowStore.Domain.Entities;
 
 namespace GrowStore.Domain.Interfaces;
 
 public interface IAddressRepository
 {
-    Task AddAsync(Address address);
     Task<Address?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Address>> GetByUserIdAsync(Guid userId);
-    Task UpdateAsync(Address address);
-    Task DeleteAsync(Guid id);
+    Task AddAsync(Address address);
 }

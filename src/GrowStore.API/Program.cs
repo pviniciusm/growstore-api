@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using GrowStore.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddApplicationServices();
-builder.Services.AddRepositories();
+builder.Services.AddRepositories(builder.Configuration);
 
 // JWT
 var jwtSettings = builder.Configuration
@@ -60,6 +62,13 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Aplica as migrations pendentes automaticamente na inicializacao.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<GrowStoreDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

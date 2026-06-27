@@ -15,7 +15,7 @@ namespace GrowStore.API.Config
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAddressRepository, AddressRepository>();
-
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
         }
     }

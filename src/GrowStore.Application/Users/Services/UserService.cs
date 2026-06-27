@@ -1,4 +1,5 @@
-﻿using GrowStore.Application.Shared.Exceptions;
+﻿using GrowStore.Application.Common.Errors;
+using GrowStore.Application.Common.Results;
 using GrowStore.Application.Users.DTOs;
 using GrowStore.Application.Users.Interfaces;
 using GrowStore.Domain.Entities;
@@ -15,30 +16,32 @@ namespace GrowStore.Application.Users.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ResponseUserDto> CreateUserAsync(CreateUserDto createUserDto)
+        public async Task<Result<ResponseUserDto>> CreateUserAsync(CreateUserDto createUserDto)
         {
             var user = User.Create(createUserDto.Name, createUserDto.Cpf, createUserDto.BirthDate, createUserDto.Role);
             await _userRepository.AddAsync(user);
 
-            return MapToResponseModel(user);
+            return Result<ResponseUserDto>.Success(MapToResponseModel(user));
         }
 
-        public async Task<ResponseUserDto> GetUserByIdAsync(Guid id)
+        public async Task<Result<ResponseUserDto>> GetUserByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
-            if (user == null)
-                throw new NotFoundException($"User not found by ID: {id}");
+            if (user is null)
+                return Result<ResponseUserDto>.Failure(
+                    Error.NotFound("User.NotFound", $"User not found by ID: {id}"));
 
-            return MapToResponseModel(user);
+            return Result<ResponseUserDto>.Success(MapToResponseModel(user));
         }
 
-        public async Task UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
+        public async Task<Result> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
-            if (user == null)
-                throw new NotFoundException($"User not found by ID: {id}");
+            if (user is null)
+                return Result.Failure(
+                    Error.NotFound("User.NotFound", $"User not found by ID: {id}"));
 
             user.Update(
                 updateUserDto.Name,
@@ -48,18 +51,21 @@ namespace GrowStore.Application.Users.Services
             );
 
             await _userRepository.UpdateAsync(user);
+
+            return Result.Success();
         }
 
-        public async Task DeleteUserAsync(Guid id)
+        public async Task<Result> DeleteUserAsync(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
-            if (user == null)
-            {
-                throw new NotFoundException($"User not found by ID: {id}");
-            }
+            if (user is null)
+                return Result.Failure(
+                    Error.NotFound("User.NotFound", $"User not found by ID: {id}"));
 
             await _userRepository.DeleteAsync(id);
+
+            return Result.Success();
         }
 
         private static ResponseUserDto MapToResponseModel(User user)

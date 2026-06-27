@@ -1,6 +1,7 @@
 using GrowStore.Domain.Entities;
 using GrowStore.Domain.Entities.Accounts;
 using GrowStore.Domain.Entities.Addresses;
+using GrowStore.Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrowStore.Infrastructure.Data;
@@ -15,7 +16,7 @@ public class GrowStoreDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<Address> Addresses => Set<Address>();
-
+    public DbSet<Category> Categories => Set<Category>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

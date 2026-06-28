@@ -47,6 +47,14 @@ public class ProductRepository : IProductRepository
         return await _context.Categories.AnyAsync(c => c.Id == categoryId);
     }
 
+    public async Task<bool> SkuExistsAsync(string? sku)
+    {
+        if (string.IsNullOrWhiteSpace(sku))
+            return false;
+
+        return await _context.ProductVariants.AnyAsync(v => v.Sku == sku);
+    }
+
     public async Task UpdateAsync(Product product)
     {
         _context.Products.Update(product);

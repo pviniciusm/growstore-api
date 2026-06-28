@@ -30,6 +30,18 @@ public class ProductService : IProductService
                 Error.NotFound("Category.NotFound", "Category not found."));
         }
 
+        if (dto.Variants is not null)
+        {
+            foreach (var variantDto in dto.Variants)
+            {
+                if (!string.IsNullOrWhiteSpace(variantDto.Sku) && await _productRepository.SkuExistsAsync(variantDto.Sku))
+                {
+                    return Result<ResponseProductDto>.Failure(
+                        Error.Conflict("ProductVariant.SkuAlreadyExists", "A product variant with this SKU already exists."));
+                }
+            }
+        }
+
         var product = Product.Create(dto.Name, dto.Description, dto.Price, dto.ImageUrl, dto.CategoryId);
 
         if (dto.Variants.Count != 0)
@@ -50,7 +62,15 @@ public class ProductService : IProductService
 
         await _productRepository.AddAsync(product);
 
-        return Result<ResponseProductDto>.Success(MapToResponse(product));
+        // reload product including navigation properties so CategoryName is populated
+        var savedProduct = await _productRepository.GetByIdAsync(product.Id);
+        if (savedProduct is null)
+        {
+            return Result<ResponseProductDto>.Failure(
+                Error.Failure("Product.CreateFailed", "Failed to create product."));
+        }
+
+        return Result<ResponseProductDto>.Success(MapToResponse(savedProduct));
     }
 
     public async Task<Result<IEnumerable<ResponseProductDto>>> GetAllAsync()

@@ -1,6 +1,6 @@
-﻿using GrowStore.Application.Auth.DTOs;
+﻿using GrowStore.API.Extensions;
+using GrowStore.Application.Auth.DTOs;
 using GrowStore.Application.Auth.Interfaces;
-using GrowStore.Domain.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,30 +12,45 @@ namespace GrowStore.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
+        private readonly IAuthService _authService;
 
-        public AuthController(ITokenService tokenService)
+        public AuthController(IAuthService authService)
         {
-            _tokenService = tokenService;
+            _authService = authService;
         }
 
-        [HttpPost("test-token")]
-        public async Task<IActionResult> TestToken()
+        [HttpPost("register")]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<AuthResponseDto>> Register(RegisterRequestDto request)
         {
-            var dto = new TokenRequestDto
-            {
-                AccountId = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
-                Email = "teste@growstore.com",
-                Role = UserRole.CUSTOMER
-            };
+            var result = await _authService.RegisterAsync(request);
+            return result.ToActionResult(this);
+        }
 
-            var token = await _tokenService.GenerateToken(dto);
-            return Ok(new { token });
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<AuthResponseDto>> Login(LoginRequestDto request)
+        {
+            var result = await _authService.LoginAsync(request);
+            return result.ToActionResult(this);
+        }
+
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<AuthResponseDto>> Refresh(RefreshTokenRequestDto request)
+        {
+            var result = await _authService.RefreshAsync(request);
+            return result.ToActionResult(this);
         }
 
         [Authorize]
         [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Me()
         {
             var accountId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -45,13 +60,5 @@ namespace GrowStore.API.Controllers
 
             return Ok(new { accountId, userId, email, role });
         }
-
-        [Authorize(Roles = "CUSTOMER")]
-        [HttpGet("customer-only")]
-        public IActionResult CustomerOnly() => Ok(new { message = "Customer access granted" });
-
-        [Authorize(Roles = "ADMIN")]
-        [HttpGet("admin-only")]
-        public IActionResult AdminOnly() => Ok(new { message = "Admin access granted" });
     }
 }

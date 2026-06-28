@@ -45,5 +45,8 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .WithMany()
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(a => a.Reference)
+            .HasMaxLength(200);
     }
 }

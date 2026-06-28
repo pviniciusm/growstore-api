@@ -4,6 +4,9 @@ using GrowStore.Application.Users.Interfaces;
 using GrowStore.Application.Users.Services;
 using GrowStore.Application.Categories.Interfaces;
 using GrowStore.Application.Categories.Services;
+using GrowStore.Application.Products.Interfaces;
+using GrowStore.Application.Products.Services;
+
 namespace GrowStore.API.Config
 {
     public static class ApplicationConfig
@@ -13,6 +16,7 @@ namespace GrowStore.API.Config
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
             return services;
         }
     }

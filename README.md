@@ -253,3 +253,18 @@ readme
 O desenvolvimento da API GrowStore encontra-se em andamento. As funcionalidades estão sendo implementadas gradualmente seguindo os requisitos propostos no desafio, com foco em qualidade de código, boas práticas de arquitetura, segurança e escalabilidade.
 
 As tabelas de acompanhamento presentes neste repositório são atualizadas conforme cada requisito é concluído, permitindo acompanhar a evolução do projeto de forma transparente.
+
+
+
+## 🐳 Executando com Docker Compose
+
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+
+### Passo a passo
+
+1. Copie o arquivo de exemplo de variáveis de ambiente:
+
+   ```bash
+   cp .env.example .env

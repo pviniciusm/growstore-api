@@ -1,4 +1,5 @@
 using GrowStore.API.Extensions;
+using GrowStore.Application.Common.Pagination;
 using GrowStore.Application.Products.DTOs;
 using GrowStore.Application.Products.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,12 @@ namespace GrowStore.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<ResponseProductDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ResponseProductDto>>> GetAll()
+        [ProducesResponseType(typeof(PagedResult<ResponseProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<PagedResult<ResponseProductDto>>> GetAll([FromQuery] ProductFilterDto filter)
         {
-            var result = await _productService.GetAllAsync();
+            var result = await _productService.GetAllPagedAsync(filter);
             return result.ToActionResult(this);
         }
 

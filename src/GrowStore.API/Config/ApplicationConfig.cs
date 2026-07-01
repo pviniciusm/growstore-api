@@ -1,13 +1,15 @@
-﻿using GrowStore.Application.Auth.Interfaces;
+﻿using FluentValidation;
+using GrowStore.Application.Auth.Interfaces;
 using GrowStore.Application.Auth.Services;
-using GrowStore.Application.Users.Interfaces;
-using GrowStore.Application.Users.Services;
 using GrowStore.Application.Categories.Interfaces;
 using GrowStore.Application.Categories.Services;
 using GrowStore.Application.Addresses.Interfaces;
 using GrowStore.Application.Addresses.Services;
 using GrowStore.Application.Products.Interfaces;
 using GrowStore.Application.Products.Services;
+using GrowStore.Application.Users.Interfaces;
+using GrowStore.Application.Users.Services;
+using GrowStore.Application.Users.Validators;
 
 namespace GrowStore.API.Config
 {
@@ -22,8 +24,13 @@ namespace GrowStore.API.Config
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IProductService, ProductService>();
+
+            // Automatically registers all validators from the Application assembly
+            services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
+
             return services;
         }
     }
 }
+
 

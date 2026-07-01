@@ -1,3 +1,4 @@
+using FluentValidation;
 using GrowStore.Application.Common.Errors;
 using GrowStore.Application.Common.Results;
 using GrowStore.Application.Products.DTOs;
@@ -10,14 +11,29 @@ namespace GrowStore.Application.Products.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
+    private readonly IValidator<CreateProductDto> _createProductValidator;
+    private readonly IValidator<UpdateProductDto> _updateProductValidator;
 
-    public ProductService(IProductRepository productRepository)
+    public ProductService(
+        IProductRepository productRepository,
+        IValidator<CreateProductDto> createProductValidator,
+        IValidator<UpdateProductDto> updateProductValidator)
     {
         _productRepository = productRepository;
+        _createProductValidator = createProductValidator;
+        _updateProductValidator = updateProductValidator;
     }
 
     public async Task<Result<ResponseProductDto>> CreateAsync(CreateProductDto dto)
     {
+        var validationResult = await _createProductValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<ResponseProductDto>.Failure(
+                Error.Validation("Product.Validation", errorMessage));
+        }
+
         if (await _productRepository.NameExistsAsync(dto.Name))
         {
             return Result<ResponseProductDto>.Failure(
@@ -37,7 +53,7 @@ public class ProductService : IProductService
                 if (!string.IsNullOrWhiteSpace(variantDto.Sku) && await _productRepository.SkuExistsAsync(variantDto.Sku))
                 {
                     return Result<ResponseProductDto>.Failure(
-                        Error.Conflict("ProductVariant.SkuAlreadyExists", "A product variant with this SKU already exists."));
+                        Error.Conflict("ProductVariant.SkuAlreadyExists", $"A product variant with SKU '{variantDto.Sku}' already exists."));
                 }
             }
         }
@@ -96,8 +112,15 @@ public class ProductService : IProductService
 
     public async Task<Result<ResponseProductDto>> UpdateAsync(Guid id, UpdateProductDto dto)
     {
-        var product = await _productRepository.GetByIdAsync(id);
+        var validationResult = await _updateProductValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<ResponseProductDto>.Failure(
+                Error.Validation("Product.Validation", errorMessage));
+        }
 
+        var product = await _productRepository.GetByIdAsync(id);
         if (product is null)
         {
             return Result<ResponseProductDto>.Failure(
@@ -107,7 +130,14 @@ public class ProductService : IProductService
         product.Update(dto.Name, dto.Description, dto.Price, dto.ImageUrl);
         await _productRepository.UpdateAsync(product);
 
-        return Result<ResponseProductDto>.Success(MapToResponse(product));
+        var updatedProduct = await _productRepository.GetByIdAsync(id);
+        if (updatedProduct is null)
+        {
+            return Result<ResponseProductDto>.Failure(
+                Error.Failure("Product.UpdateFailed", "Failed to update product."));
+        }
+
+        return Result<ResponseProductDto>.Success(MapToResponse(updatedProduct));
     }
 
     public async Task<Result> DeleteAsync(Guid id)

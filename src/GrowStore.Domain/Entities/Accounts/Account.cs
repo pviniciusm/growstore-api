@@ -29,5 +29,7 @@ public class Account
         UserId = userId;
         Email = email;
         Password = password;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

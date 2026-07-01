@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace GrowStore.Application.Auth.Services
 {
@@ -16,6 +17,12 @@ namespace GrowStore.Application.Auth.Services
         public JwtTokenService(IOptions<JwtSettings> options)
         {
             _settings = options.Value;
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var randomBytes = RandomNumberGenerator.GetBytes(64);
+            return Convert.ToBase64String(randomBytes);
         }
 
         public Task<string> GenerateToken(TokenRequestDto dto)

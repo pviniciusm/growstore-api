@@ -1,5 +1,3 @@
-using GrowStore.Domain.Shared.Enums;
-
 namespace GrowStore.Application.Auth.DTOs;
 
 public class RegisterRequestDto

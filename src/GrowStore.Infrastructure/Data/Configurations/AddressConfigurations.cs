@@ -50,3 +50,4 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasMaxLength(200);
     }
 }
+

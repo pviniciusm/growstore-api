@@ -24,7 +24,7 @@ public class CreateProductVariantDtoValidator : AbstractValidator<CreateProductV
 
         RuleFor(x => x.Sku)
             .MaximumLength(50).WithMessage("SKU must be at most 50 characters long.")
-            .Must(ProductValidationRules.BeAValidSku).WithMessage("SKU must contain only uppercase letters, numbers, and hyphens.")
+            .Must(ProductValidationRules.BeAValidSku).WithMessage("SKU must contain only uppercase letters, numbers, hyphens, and underscores.")
             .When(x => !string.IsNullOrWhiteSpace(x.Sku));
     }
 }

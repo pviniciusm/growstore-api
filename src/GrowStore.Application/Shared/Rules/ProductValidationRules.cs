@@ -11,7 +11,7 @@ public static class ProductValidationRules
     );
 
     private static readonly Regex SkuRegex = new(
-        @"^[A-Z0-9\-]+$",
+        @"^[A-Z0-9_-]+$",
         RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(250)
     );

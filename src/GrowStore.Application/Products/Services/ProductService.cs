@@ -1,4 +1,5 @@
 using GrowStore.Application.Common.Errors;
+using GrowStore.Application.Common.Pagination;
 using GrowStore.Application.Common.Results;
 using GrowStore.Application.Products.DTOs;
 using GrowStore.Application.Products.Interfaces;
@@ -73,12 +74,35 @@ public class ProductService : IProductService
         return Result<ResponseProductDto>.Success(MapToResponse(savedProduct));
     }
 
-    public async Task<Result<IEnumerable<ResponseProductDto>>> GetAllAsync()
+    public async Task<Result<PagedResult<ResponseProductDto>>> GetAllPagedAsync(ProductFilterDto filter)
     {
-        var products = await _productRepository.GetAllAsync();
-        var response = products.Select(MapToResponse);
+        if (filter.MinPrice.HasValue && filter.MaxPrice.HasValue && filter.MinPrice > filter.MaxPrice)
+        {
+            return Result<PagedResult<ResponseProductDto>>.Failure(
+                Error.Validation("Product.InvalidPriceRange", "MinPrice cannot be greater than MaxPrice."));
+        }
 
-        return Result<IEnumerable<ResponseProductDto>>.Success(response);
+        if (filter.CategoryId.HasValue && !await _productRepository.CategoryExistsAsync(filter.CategoryId.Value))
+        {
+            return Result<PagedResult<ResponseProductDto>>.Failure(
+                Error.NotFound("Category.NotFound", "Category not found."));
+        }
+
+        var page = filter.Page < 1 ? 1 : filter.Page;
+        var limit = filter.Limit is < 1 or > 100 ? 10 : filter.Limit;
+
+        var (products, totalCount) = await _productRepository.GetAllPagedAsync(
+            name: filter.Name,
+            categoryId: filter.CategoryId,
+            minPrice: filter.MinPrice,
+            maxPrice: filter.MaxPrice,
+            page: page,
+            limit: limit);
+
+        var items = products.Select(MapToResponse);
+
+        return Result<PagedResult<ResponseProductDto>>.Success(
+            PagedResult<ResponseProductDto>.Create(items, page, limit, totalCount));
     }
 
     public async Task<Result<ResponseProductDto>> GetByIdAsync(Guid id)

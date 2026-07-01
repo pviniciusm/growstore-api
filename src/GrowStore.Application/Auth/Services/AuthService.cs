@@ -1,8 +1,10 @@
+using FluentValidation;
 using GrowStore.Application.Auth.DTOs;
 using GrowStore.Application.Auth.Interfaces;
 using GrowStore.Application.Auth.Settings;
 using GrowStore.Application.Common.Errors;
 using GrowStore.Application.Common.Results;
+using GrowStore.Application.Shared.Rules;
 using GrowStore.Domain.Entities;
 using GrowStore.Domain.Entities.Accounts;
 using GrowStore.Domain.Interfaces;
@@ -19,6 +21,8 @@ public class AuthService : IAuthService
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly JwtSettings _jwtSettings;
+    private readonly IValidator<RegisterRequestDto> _registerValidator;
+    private readonly IValidator<LoginRequestDto> _loginValidator;
 
     public AuthService(
         IUserRepository userRepository,
@@ -26,7 +30,9 @@ public class AuthService : IAuthService
         IRefreshTokenRepository refreshTokenRepository,
         IPasswordHasher passwordHasher,
         ITokenService tokenService,
-        IOptions<JwtSettings> jwtSettings)
+        IOptions<JwtSettings> jwtSettings,
+        IValidator<RegisterRequestDto> registerValidator,
+        IValidator<LoginRequestDto> loginValidator)
     {
         _userRepository = userRepository;
         _accountRepository = accountRepository;
@@ -34,18 +40,28 @@ public class AuthService : IAuthService
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
         _jwtSettings = jwtSettings.Value;
+        _registerValidator = registerValidator;
+        _loginValidator = loginValidator;
     }
 
     public async Task<Result<AuthResponseDto>> RegisterAsync(RegisterRequestDto request)
     {
+        var validationResult = await _registerValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<AuthResponseDto>.Failure(
+                Error.Validation("Auth.Validation", errorMessage));
+        }
+
         if (await _accountRepository.EmailExistsAsync(request.Email))
         {
             return Result<AuthResponseDto>.Failure(
                 Error.Conflict("Account.EmailAlreadyExists", "Email already registered."));
         }
 
-        // Todo novo cadastro entra como CUSTOMER por padrao.
-        var user = User.Create(request.Name, request.Cpf, request.BirthDate, UserRole.CUSTOMER);
+        var formattedCpf = UserValidationRules.FormatCpf(request.Cpf);
+        var user = User.Create(request.Name, formattedCpf, request.BirthDate, UserRole.CUSTOMER);
         await _userRepository.AddAsync(user);
 
         var passwordHash = _passwordHasher.Hash(request.Password);
@@ -58,6 +74,14 @@ public class AuthService : IAuthService
 
     public async Task<Result<AuthResponseDto>> LoginAsync(LoginRequestDto request)
     {
+        var validationResult = await _loginValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<AuthResponseDto>.Failure(
+                Error.Validation("Auth.Validation", errorMessage));
+        }
+
         var account = await _accountRepository.GetByEmailAsync(request.Email);
 
         if (account is null || !_passwordHasher.Verify(request.Password, account.Password))

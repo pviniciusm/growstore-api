@@ -236,4 +236,127 @@ public class ProductServiceTests
         result.Value.Should().NotBeNull();
         result.Value!.Name.Should().Be("Updated Product");
     }
+
+    [Fact]
+    public async Task GetAllPagedAsync_MinPriceGreaterThanMaxPrice_ReturnsValidationError()
+    {
+        var filter = new ProductFilterDto
+        {
+            MinPrice = 100,
+            MaxPrice = 10
+        };
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("Product.InvalidPriceRange");
+    }
+
+    [Fact]
+    public async Task GetAllPagedAsync_CategoryNotFound_ReturnsNotFound()
+    {
+        var categoryId = Guid.NewGuid();
+        var filter = new ProductFilterDto
+        {
+            CategoryId = categoryId
+        };
+
+        _productRepositoryMock.Setup(r => r.CategoryExistsAsync(categoryId)).ReturnsAsync(false);
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeTrue();
+        result.Error!.Code.Should().Be("Category.NotFound");
+    }
+
+    [Fact]
+    public async Task GetAllPagedAsync_ValidFilter_ReturnsPagedResultWithMappedItems()
+    {
+        var categoryId = Guid.NewGuid();
+        var category = Category.Create("Plantas", null);
+        var product = Product.Create("Vaso Cerâmico", "Descrição", 29.90m, null, categoryId);
+        product.GetType().GetProperty("Category")?.SetValue(product, category);
+
+        var filter = new ProductFilterDto
+        {
+            Name = "Vaso",
+            CategoryId = categoryId,
+            MinPrice = 10,
+            MaxPrice = 50,
+            Page = 1,
+            Limit = 10
+        };
+
+        _productRepositoryMock.Setup(r => r.CategoryExistsAsync(categoryId)).ReturnsAsync(true);
+        _productRepositoryMock
+            .Setup(r => r.GetAllPagedAsync("Vaso", categoryId, 10, 50, 1, 10))
+            .ReturnsAsync((new List<Product> { product }, 1));
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeFalse();
+        result.Value.Should().NotBeNull();
+        result.Value!.TotalCount.Should().Be(1);
+        result.Value!.Page.Should().Be(1);
+        result.Value!.Limit.Should().Be(10);
+        result.Value!.Items.Should().ContainSingle();
+        result.Value!.Items.First().Name.Should().Be("Vaso Cerâmico");
+        result.Value!.Items.First().CategoryName.Should().Be("Plantas");
+    }
+
+    [Fact]
+    public async Task GetAllPagedAsync_PageLessThanOne_ClampsToPageOne()
+    {
+        var filter = new ProductFilterDto
+        {
+            Page = 0,
+            Limit = 10
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetAllPagedAsync(null, null, null, null, 1, 10))
+            .ReturnsAsync((new List<Product>(), 0));
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeFalse();
+        result.Value!.Page.Should().Be(1);
+        _productRepositoryMock.Verify(r => r.GetAllPagedAsync(null, null, null, null, 1, 10), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetAllPagedAsync_LimitOutOfRange_ClampsToDefaultTen()
+    {
+        var filter = new ProductFilterDto
+        {
+            Page = 1,
+            Limit = 500
+        };
+
+        _productRepositoryMock
+            .Setup(r => r.GetAllPagedAsync(null, null, null, null, 1, 10))
+            .ReturnsAsync((new List<Product>(), 0));
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeFalse();
+        result.Value!.Limit.Should().Be(10);
+        _productRepositoryMock.Verify(r => r.GetAllPagedAsync(null, null, null, null, 1, 10), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetAllPagedAsync_NoFilters_ReturnsEmptyPagedResultWhenNoProducts()
+    {
+        var filter = new ProductFilterDto();
+
+        _productRepositoryMock
+            .Setup(r => r.GetAllPagedAsync(null, null, null, null, 1, 10))
+            .ReturnsAsync((new List<Product>(), 0));
+
+        var result = await _productService.GetAllPagedAsync(filter);
+
+        result.IsFailure.Should().BeFalse();
+        result.Value!.Items.Should().BeEmpty();
+        result.Value!.TotalCount.Should().Be(0);
+    }
 }

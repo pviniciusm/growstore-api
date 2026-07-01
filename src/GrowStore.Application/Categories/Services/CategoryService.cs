@@ -1,3 +1,4 @@
+using FluentValidation;
 using GrowStore.Application.Categories.DTOs;
 using GrowStore.Application.Categories.Interfaces;
 using GrowStore.Application.Common.Errors;
@@ -10,14 +11,29 @@ namespace GrowStore.Application.Categories.Services;
 public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IValidator<CreateCategoryDto> _createCategoryValidator;
+    private readonly IValidator<UpdateCategoryDto> _updateCategoryValidator;
 
-    public CategoryService(ICategoryRepository categoryRepository)
+    public CategoryService(
+        ICategoryRepository categoryRepository,
+        IValidator<CreateCategoryDto> createCategoryValidator,
+        IValidator<UpdateCategoryDto> updateCategoryValidator)
     {
         _categoryRepository = categoryRepository;
+        _createCategoryValidator = createCategoryValidator;
+        _updateCategoryValidator = updateCategoryValidator;
     }
 
     public async Task<Result<ResponseCategoryDto>> CreateAsync(CreateCategoryDto dto)
     {
+        var validationResult = await _createCategoryValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<ResponseCategoryDto>.Failure(
+                Error.Validation("Category.Validation", errorMessage));
+        }
+
         if (await _categoryRepository.NameExistsAsync(dto.Name))
         {
             return Result<ResponseCategoryDto>.Failure(
@@ -53,6 +69,14 @@ public class CategoryService : ICategoryService
 
     public async Task<Result<ResponseCategoryDto>> UpdateAsync(Guid id, UpdateCategoryDto dto)
     {
+        var validationResult = await _updateCategoryValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+            return Result<ResponseCategoryDto>.Failure(
+                Error.Validation("Category.Validation", errorMessage));
+        }
+
         var category = await _categoryRepository.GetByIdAsync(id);
 
         if (category is null)

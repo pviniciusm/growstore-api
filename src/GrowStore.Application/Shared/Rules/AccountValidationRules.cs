@@ -11,19 +11,4 @@ public static class AccountValidationRules
 
         return Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>]).+$");
     }
-
-    public static bool BeAValidEmail(string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-            return false;
-
-        try
-        {
-            return new System.Net.Mail.MailAddress(email).Address == email.Trim();
-        }
-        catch
-        {
-            return false;
-        }
-    }
 }

@@ -36,7 +36,8 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Category)
             .Include(p => p.Variants)
             .AsQueryable()
-            .WhereIf(!string.IsNullOrWhiteSpace(name), p => EF.Functions.Like(p.Name, $"%{name}%"))
+            .WhereIf(!string.IsNullOrWhiteSpace(name), p => EF.Functions.Like(
+                p.Name, $"%{name!.Replace("[", "[[]").Replace("%", "[%]").Replace("_", "[_]")}%"))
             .WhereIf(categoryId.HasValue, p => p.CategoryId == categoryId!.Value)
             .WhereIf(minPrice.HasValue, p => p.Price >= minPrice!.Value)
             .WhereIf(maxPrice.HasValue, p => p.Price <= maxPrice!.Value);

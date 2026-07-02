@@ -1,6 +1,7 @@
 using GrowStore.Domain.Entities.Products;
 using GrowStore.Domain.Interfaces;
 using GrowStore.Infrastructure.Data;
+using GrowStore.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrowStore.Infrastructure.Repositories;
@@ -28,13 +29,28 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<(IEnumerable<Product> Items, int TotalCount)> GetAllPagedAsync(
+        string? name, Guid? categoryId, decimal? minPrice, decimal? maxPrice, int page, int limit)
     {
-        return await _context.Products
+        var query = _context.Products
             .Include(p => p.Category)
             .Include(p => p.Variants)
+            .AsQueryable()
+            .WhereIf(!string.IsNullOrWhiteSpace(name), p => EF.Functions.Like(
+                p.Name, $"%{name!.Replace("[", "[[]").Replace("%", "[%]").Replace("_", "[_]")}%"))
+            .WhereIf(categoryId.HasValue, p => p.CategoryId == categoryId!.Value)
+            .WhereIf(minPrice.HasValue, p => p.Price >= minPrice!.Value)
+            .WhereIf(maxPrice.HasValue, p => p.Price <= maxPrice!.Value);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
             .OrderBy(p => p.Name)
+            .Skip((page - 1) * limit)
+            .Take(limit)
             .ToListAsync();
+
+        return (items, totalCount);
     }
 
     public async Task<bool> NameExistsAsync(string name)

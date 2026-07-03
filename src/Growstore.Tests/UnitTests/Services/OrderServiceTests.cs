@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using GrowStore.Application.Orders.DTOs;
 using GrowStore.Application.Orders.Services;
+using GrowStore.Domain.Entities.Carts;
 using GrowStore.Domain.Entities.Orders;
 using GrowStore.Domain.Entities.Products;
 using GrowStore.Domain.Interfaces;
@@ -15,7 +16,7 @@ public class OrderServiceTests
 {
     private readonly Mock<IOrderRepository> _orderRepoMock;
     private readonly Mock<IProductRepository> _productRepoMock;
-    private readonly Mock<IValidator<CreateOrderDto>> _createValidatorMock;
+    private readonly Mock<ICartRepository> _cartRepoMock;
     private readonly Mock<IValidator<UpdateOrderStatusDto>> _updateStatusValidatorMock;
     private readonly OrderService _orderService;
 
@@ -23,12 +24,8 @@ public class OrderServiceTests
     {
         _orderRepoMock = new Mock<IOrderRepository>();
         _productRepoMock = new Mock<IProductRepository>();
-        _createValidatorMock = new Mock<IValidator<CreateOrderDto>>();
+        _cartRepoMock = new Mock<ICartRepository>();
         _updateStatusValidatorMock = new Mock<IValidator<UpdateOrderStatusDto>>();
-
-        _createValidatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<CreateOrderDto>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult());
 
         _updateStatusValidatorMock
             .Setup(v => v.ValidateAsync(It.IsAny<UpdateOrderStatusDto>(), It.IsAny<CancellationToken>()))
@@ -37,70 +34,59 @@ public class OrderServiceTests
         _orderService = new OrderService(
             _orderRepoMock.Object,
             _productRepoMock.Object,
-            _createValidatorMock.Object,
+            _cartRepoMock.Object,
             _updateStatusValidatorMock.Object);
     }
 
-    // === CreateAsync ===
+    // === CreateFromCartAsync ===
 
     [Fact]
-    public async Task CreateAsync_EmptyUserId_ReturnsValidationError()
+    public async Task CreateFromCartAsync_EmptyUserId_ReturnsValidationError()
     {
-        var dto = new CreateOrderDto { Items = [new CreateOrderItemDto { ProductVariantId = Guid.NewGuid(), Quantity = 1 }] };
-
-        var result = await _orderService.CreateAsync(Guid.Empty, dto);
+        var result = await _orderService.CreateFromCartAsync(Guid.Empty);
 
         result.IsFailure.Should().BeTrue();
         result.Error!.Code.Should().Be("Order.InvalidUserId");
     }
 
     [Fact]
-    public async Task CreateAsync_EmptyItems_ReturnsValidationError()
+    public async Task CreateFromCartAsync_CartNotFound_ReturnsError()
     {
-        var dto = new CreateOrderDto();
+        var userId = Guid.NewGuid();
+        _cartRepoMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync((Cart?)null);
 
-        _createValidatorMock
-            .Setup(v => v.ValidateAsync(dto, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult(new List<ValidationFailure>
-            {
-                new("Items", "Order must have at least one item.")
-            }));
-
-        var result = await _orderService.CreateAsync(Guid.NewGuid(), dto);
+        var result = await _orderService.CreateFromCartAsync(userId);
 
         result.IsFailure.Should().BeTrue();
-        result.Error!.Code.Should().Be("Order.Validation");
+        result.Error!.Code.Should().Be("Order.EmptyCart");
     }
 
     [Fact]
-    public async Task CreateAsync_VariantNotFound_ReturnsNotFound()
+    public async Task CreateFromCartAsync_EmptyCart_ReturnsError()
     {
-        var variantId = Guid.NewGuid();
-        var dto = new CreateOrderDto
-        {
-            Items = [new CreateOrderItemDto { ProductVariantId = variantId, Quantity = 1 }]
-        };
+        var userId = Guid.NewGuid();
+        var cart = Cart.Create(userId);
 
-        _productRepoMock.Setup(r => r.GetVariantByIdAsync(variantId)).ReturnsAsync((ProductVariant?)null);
+        _cartRepoMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(cart);
 
-        var result = await _orderService.CreateAsync(Guid.NewGuid(), dto);
+        var result = await _orderService.CreateFromCartAsync(userId);
 
         result.IsFailure.Should().BeTrue();
-        result.Error!.Code.Should().Be("ProductVariant.NotFound");
+        result.Error!.Code.Should().Be("Order.EmptyCart");
     }
 
     [Fact]
-    public async Task CreateAsync_InsufficientStock_ReturnsNotFound()
+    public async Task CreateFromCartAsync_VariantNotFound_ReturnsNotFound()
     {
+        var userId = Guid.NewGuid();
         var variantId = Guid.NewGuid();
-        var dto = new CreateOrderDto
-        {
-            Items = [new CreateOrderItemDto { ProductVariantId = variantId, Quantity = 10 }]
-        };
+        var cart = Cart.Create(userId);
+        cart.AddItem(variantId, 2);
 
+        _cartRepoMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(cart);
         _productRepoMock.Setup(r => r.GetVariantByIdAsync(variantId)).ReturnsAsync((ProductVariant?)null);
 
-        var result = await _orderService.CreateAsync(Guid.NewGuid(), dto);
+        var result = await _orderService.CreateFromCartAsync(userId);
 
         result.IsFailure.Should().BeTrue();
         result.Error!.Code.Should().Be("ProductVariant.NotFound");

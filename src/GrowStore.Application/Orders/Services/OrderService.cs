@@ -12,48 +12,48 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IValidator<CreateOrderDto> _createOrderValidator;
+    private readonly ICartRepository _cartRepository;
     private readonly IValidator<UpdateOrderStatusDto> _updateStatusValidator;
 
     public OrderService(
         IOrderRepository orderRepository,
         IProductRepository productRepository,
-        IValidator<CreateOrderDto> createOrderValidator,
+        ICartRepository cartRepository,
         IValidator<UpdateOrderStatusDto> updateStatusValidator)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
-        _createOrderValidator = createOrderValidator;
+        _cartRepository = cartRepository;
         _updateStatusValidator = updateStatusValidator;
     }
 
-    public async Task<Result<OrderResponseDto>> CreateAsync(Guid userId, CreateOrderDto dto)
+    public async Task<Result<OrderResponseDto>> CreateFromCartAsync(Guid userId)
     {
         if (userId == Guid.Empty)
             return Result<OrderResponseDto>.Failure(
                 Error.Validation("Order.InvalidUserId", "UserId is required."));
 
-        var validation = await _createOrderValidator.ValidateAsync(dto);
-        if (!validation.IsValid)
+        var cart = await _cartRepository.GetByUserIdAsync(userId);
+
+        if (cart is null || cart.Items.Count == 0)
             return Result<OrderResponseDto>.Failure(
-                Error.Validation("Order.Validation",
-                    string.Join(" ", validation.Errors.Select(e => e.ErrorMessage))));
+                Error.Validation("Order.EmptyCart", "Cart is empty. Add items before placing an order."));
 
         var order = Order.Create(userId);
 
-        foreach (var item in dto.Items)
+        foreach (var cartItem in cart.Items)
         {
-            var variant = await _productRepository.GetVariantByIdAsync(item.ProductVariantId);
+            var variant = await _productRepository.GetVariantByIdAsync(cartItem.ProductVariantId);
 
             if (variant is null)
                 return Result<OrderResponseDto>.Failure(
                     Error.NotFound("ProductVariant.NotFound",
-                        $"Product variant '{item.ProductVariantId}' not found."));
+                        $"Product variant '{cartItem.ProductVariantId}' not found."));
 
-            if (variant.Stock < item.Quantity)
+            if (variant.Stock < cartItem.Quantity)
                 return Result<OrderResponseDto>.Failure(
                     Error.Validation("Order.InsufficientStock",
-                        $"Insufficient stock for '{variant.Product?.Name}'. Available: {variant.Stock}, Requested: {item.Quantity}"));
+                        $"Insufficient stock for '{variant.Product?.Name}'. Available: {variant.Stock}, Requested: {cartItem.Quantity}"));
 
             var variantDescription = $"{variant.Color ?? ""} {variant.Size ?? ""}".Trim();
 
@@ -61,14 +61,15 @@ public class OrderService : IOrderService
                 variant.Id,
                 variant.Product?.Name ?? "Unknown",
                 string.IsNullOrEmpty(variantDescription) ? null : variantDescription,
-                item.Quantity,
+                cartItem.Quantity,
                 variant.Price);
 
-            variant.DecreaseStock(item.Quantity);
+            variant.DecreaseStock(cartItem.Quantity);
             await _productRepository.UpdateAsync(variant.Product!);
         }
 
         await _orderRepository.AddAsync(order);
+        await _cartRepository.DeleteAsync(userId);
 
         return Result<OrderResponseDto>.Success(MapToResponse(order));
     }

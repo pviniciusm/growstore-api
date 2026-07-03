@@ -23,10 +23,10 @@ public class OrderController : ControllerBase
     [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<OrderResponseDto>> Create(CreateOrderDto dto)
+    public async Task<ActionResult<OrderResponseDto>> Create()
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _orderService.CreateAsync(userId, dto);
+        var result = await _orderService.CreateFromCartAsync(userId);
         return result.ToActionResult(this);
     }
 

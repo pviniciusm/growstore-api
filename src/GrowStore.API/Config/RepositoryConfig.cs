@@ -18,6 +18,7 @@ namespace GrowStore.API.Config
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             return services;
         }

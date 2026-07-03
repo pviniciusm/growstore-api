@@ -8,6 +8,8 @@ using GrowStore.Application.Products.Services;
 using GrowStore.Application.Users.Interfaces;
 using GrowStore.Application.Users.Services;
 using GrowStore.Application.Users.Validators;
+using GrowStore.Application.Orders.Interfaces;
+using GrowStore.Application.Orders.Services;
 
 namespace GrowStore.API.Config
 {
@@ -21,9 +23,11 @@ namespace GrowStore.API.Config
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
-
             // Automatically registers all validators from the Application assembly
             services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
+            services.AddScoped<IOrderService, OrderService>();
+
+
 
             return services;
         }

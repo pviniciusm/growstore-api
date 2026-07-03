@@ -18,4 +18,5 @@ public interface IProductRepository
     Task DeleteAsync(Guid id);
     Task<bool> CategoryExistsAsync(Guid categoryId);
     Task<bool> SkuExistsAsync(string? sku);
+    Task<ProductVariant?> GetVariantByIdAsync(Guid variantId);
 }

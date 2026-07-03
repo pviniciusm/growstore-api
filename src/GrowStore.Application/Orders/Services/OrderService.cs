@@ -4,6 +4,7 @@ using GrowStore.Application.Orders.DTOs;
 using GrowStore.Application.Orders.Interfaces;
 using GrowStore.Domain.Entities.Orders;
 using GrowStore.Domain.Interfaces;
+using FluentValidation;
 
 namespace GrowStore.Application.Orders.Services;
 
@@ -11,18 +12,32 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IValidator<CreateOrderDto> _createOrderValidator;
+    private readonly IValidator<UpdateOrderStatusDto> _updateStatusValidator;
 
-    public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
+    public OrderService(
+        IOrderRepository orderRepository,
+        IProductRepository productRepository,
+        IValidator<CreateOrderDto> createOrderValidator,
+        IValidator<UpdateOrderStatusDto> updateStatusValidator)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _createOrderValidator = createOrderValidator;
+        _updateStatusValidator = updateStatusValidator;
     }
 
     public async Task<Result<OrderResponseDto>> CreateAsync(Guid userId, CreateOrderDto dto)
     {
-        if (dto.Items.Count == 0)
+        if (userId == Guid.Empty)
             return Result<OrderResponseDto>.Failure(
-                Error.Validation("Order.Validation", "Order must have at least one item."));
+                Error.Validation("Order.InvalidUserId", "UserId is required."));
+
+        var validation = await _createOrderValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result<OrderResponseDto>.Failure(
+                Error.Validation("Order.Validation",
+                    string.Join(" ", validation.Errors.Select(e => e.ErrorMessage))));
 
         var order = Order.Create(userId);
 
@@ -78,6 +93,12 @@ public class OrderService : IOrderService
 
     public async Task<Result> UpdateStatusAsync(Guid orderId, UpdateOrderStatusDto dto)
     {
+        var validation = await _updateStatusValidator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return Result.Failure(
+                Error.Validation("Order.Validation",
+                    string.Join(" ", validation.Errors.Select(e => e.ErrorMessage))));
+
         var order = await _orderRepository.GetByIdAsync(orderId);
 
         if (order is null)

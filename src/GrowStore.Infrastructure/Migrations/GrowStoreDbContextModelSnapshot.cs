@@ -448,6 +448,8 @@ namespace GrowStore.Infrastructure.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
             modelBuilder.Entity("GrowStore.Domain.Entities.Carts.CartItem", b =>
                 {
                     b.HasOne("GrowStore.Domain.Entities.Carts.Cart", "Cart")
@@ -490,6 +492,10 @@ namespace GrowStore.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("GrowStore.Domain.Entities.Orders.Order", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("GrowStore.Domain.Entities.Carts.Cart", b =>
                 {
                     b.Navigation("Items");
@@ -503,5 +509,4 @@ namespace GrowStore.Infrastructure.Migrations
         }
     }
 }
-
 

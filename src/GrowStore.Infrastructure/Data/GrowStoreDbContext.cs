@@ -1,6 +1,7 @@
 using GrowStore.Domain.Entities;
 using GrowStore.Domain.Entities.Accounts;
 using GrowStore.Domain.Entities.Addresses;
+using GrowStore.Domain.Entities.Carts;
 using GrowStore.Domain.Entities.Categories;
 using GrowStore.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,8 @@ public class GrowStoreDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

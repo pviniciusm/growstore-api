@@ -11,4 +11,5 @@ public interface IProductService
     Task<Result<ResponseProductDto>> GetByIdAsync(Guid id);
     Task<Result<ResponseProductDto>> UpdateAsync(Guid id, UpdateProductDto dto);
     Task<Result> DeleteAsync(Guid id);
+    Task<Result> UpdateStockAsync(Guid variantId, UpdateStockDto dto);
 }

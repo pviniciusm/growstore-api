@@ -2,6 +2,7 @@ using GrowStore.API.Extensions;
 using GrowStore.Application.Common.Pagination;
 using GrowStore.Application.Products.DTOs;
 using GrowStore.Application.Products.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GrowStore.API.Controllers
@@ -36,6 +37,7 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [ProducesResponseType(typeof(ResponseProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -46,6 +48,7 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ResponseProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -55,12 +58,24 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(Guid id)
         {
             var result = await _productService.DeleteAsync(id);
+            return result.ToActionResult(this);
+        }
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpPatch("variants/{variantId:guid}/stock")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult> UpdateStock(Guid variantId, UpdateStockDto dto)
+        {
+            var result = await _productService.UpdateStockAsync(variantId, dto);
             return result.ToActionResult(this);
         }
     }

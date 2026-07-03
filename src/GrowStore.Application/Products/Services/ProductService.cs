@@ -200,4 +200,22 @@ public class ProductService : IProductService
         CreatedAt = product.CreatedAt,
         UpdatedAt = product.UpdatedAt
     };
+
+    public async Task<Result> UpdateStockAsync(Guid variantId, UpdateStockDto dto)
+    {
+        var variant = await _productRepository.GetVariantByIdAsync(variantId);
+
+        if (variant is null)
+            return Result.Failure(
+                Error.NotFound("ProductVariant.NotFound", "Product variant not found."));
+
+        if (dto.Quantity < 0)
+            return Result.Failure(
+                Error.Validation("Stock.Validation", "Stock quantity cannot be negative."));
+
+        variant.SetStock(dto.Quantity);
+        await _productRepository.UpdateAsync(variant.Product!);
+
+        return Result.Success();
+    }
 }

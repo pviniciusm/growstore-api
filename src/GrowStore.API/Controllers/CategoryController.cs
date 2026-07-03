@@ -1,6 +1,7 @@
 using GrowStore.API.Extensions;
 using GrowStore.Application.Categories.DTOs;
 using GrowStore.Application.Categories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GrowStore.API.Controllers
@@ -33,6 +34,7 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [ProducesResponseType(typeof(ResponseCategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -43,6 +45,7 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ResponseCategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -52,6 +55,7 @@ namespace GrowStore.API.Controllers
             return result.ToActionResult(this);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

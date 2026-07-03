@@ -1,0 +1,4 @@
+services:
+  growstore-api:
+    environment:
+      - JwtSettings__SecretKey=${JWT_SECRET}

@@ -17,7 +17,7 @@ public class ProductVariant
 
     private ProductVariant()
     {
-        // Necessário para o Entity Framework
+        // Necessï¿½rio para o Entity Framework
     }
 
     private ProductVariant(Guid productId, string? color, string? size, int stock, decimal price, string? sku)
@@ -76,5 +76,12 @@ public class ProductVariant
 
         if (price < 0)
             throw new DomainException("Price must be greater than or equal to zero.");
+    }
+
+    public void SetStock(int quantity)
+    {
+        if (quantity < 0)
+            throw new DomainException("Stock cannot be negative.");
+        Stock = quantity;
     }
 }

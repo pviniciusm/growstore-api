@@ -1,13 +1,16 @@
-﻿namespace GrowStore.Application.Addresses.Interfaces
+﻿using GrowStore.Application.Addresses.DTOs;
+using GrowStore.Application.Common.Results;
+
+namespace GrowStore.Application.Addresses.Interfaces;
+
+public interface IAddressService
 {
-    public interface IAddressService
-    {
-        // TODO: Atribuir DTOs no lugar de entidades, para evitar expor detalhes desnecessários.
-        // Task<Address> AddAsync(Address address);
-        // Task<Address?> GetByIdAsync(Guid id);
-        // Task<IEnumerable<Address>> GetByUserIdAsync(Guid userId);
-        // Task<Address> UpdateAsync(Address address);
-        // Task DeleteAsync(Guid id);
-        // Task SetDefaultAsync(Guid id, Guid userId);
-    }
+    Task<Result<AddressResponseDto>> CreateAsync(CreateAddressDto dto);
+    Task<Result<AddressResponseDto>> GetByIdAsync(Guid id);
+    Task<Result<IEnumerable<AddressResponseDto>>> GetByUserIdAsync(Guid userId);
+    Task<Result<AddressResponseDto>> UpdateAsync(Guid id, UpdateAddressDto dto);
+    Task<Result> DeleteAsync(Guid id);
+
+    // Task SetDefaultAsync(Guid id, Guid userId);
 }
+

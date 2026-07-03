@@ -4,6 +4,7 @@ using GrowStore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrowStore.Infrastructure.Migrations
 {
     [DbContext(typeof(GrowStoreDbContext))]
-    partial class GrowStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260702025559_AddCarts")]
+    partial class AddCarts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,10 +108,6 @@ namespace GrowStore.Infrastructure.Migrations
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Reference")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -223,67 +222,6 @@ namespace GrowStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories", (string)null);
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Orders.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Orders.OrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("VariantDescription")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("GrowStore.Domain.Entities.Products.Product", b =>
@@ -441,13 +379,6 @@ namespace GrowStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GrowStore.Domain.Entities.Orders.OrderItem", b =>
-                {
-                    b.HasOne("GrowStore.Domain.Entities.Orders.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
             modelBuilder.Entity("GrowStore.Domain.Entities.Carts.CartItem", b =>
                 {
                     b.HasOne("GrowStore.Domain.Entities.Carts.Cart", "Cart")
@@ -489,7 +420,6 @@ namespace GrowStore.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GrowStore.Domain.Entities.Orders.Order", b =>
             modelBuilder.Entity("GrowStore.Domain.Entities.Carts.Cart", b =>
                 {
                     b.Navigation("Items");
@@ -503,5 +433,3 @@ namespace GrowStore.Infrastructure.Migrations
         }
     }
 }
-
-

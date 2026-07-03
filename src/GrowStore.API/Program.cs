@@ -14,18 +14,48 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Configuração do Swagger enriquecida
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "GrowStore API",
+        Version = "v1",
+        Description = "API RESTful desenvolvida como solução para o Desafio Back-End GrowStore.",
+        Contact = new OpenApiContact
+        {
+            Name = "GrowStore Admin",
+            Email = "admin@growstore.com"
+        }
+    });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
+        Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter your JWT token"
+        Description = "Insira o token JWT desta maneira: Bearer {seu token}"
     });
 
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+
+    // Mantido o filtro que você já possuía
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 

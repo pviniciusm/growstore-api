@@ -89,4 +89,12 @@ public class ProductRepository : IProductRepository
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<ProductVariant?> GetVariantByIdAsync(Guid variantId)
+    {
+        return await _context.ProductVariants
+            .Include(v => v.Product)
+            .FirstOrDefaultAsync(v => v.Id == variantId);
+    }
 }
+

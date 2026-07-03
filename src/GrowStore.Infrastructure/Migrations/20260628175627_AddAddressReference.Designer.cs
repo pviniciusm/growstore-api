@@ -4,6 +4,7 @@ using GrowStore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrowStore.Infrastructure.Migrations
 {
     [DbContext(typeof(GrowStoreDbContext))]
-    partial class GrowStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628175627_AddAddressReference")]
+    partial class AddAddressReference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,38 +58,6 @@ namespace GrowStore.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Accounts", (string)null);
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Accounts.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("Token");
-
-                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("GrowStore.Domain.Entities.Addresses.Address", b =>
@@ -167,93 +138,6 @@ namespace GrowStore.Infrastructure.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("GrowStore.Domain.Entities.Products.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Products", (string)null);
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Products.ProductVariant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Color")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Size")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Sku")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("Sku")
-                        .IsUnique()
-                        .HasFilter("[Sku] IS NOT NULL");
-
-                    b.ToTable("ProductVariants", (string)null);
-                });
-
             modelBuilder.Entity("GrowStore.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -304,15 +188,6 @@ namespace GrowStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GrowStore.Domain.Entities.Accounts.RefreshToken", b =>
-                {
-                    b.HasOne("GrowStore.Domain.Entities.Accounts.Account", null)
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GrowStore.Domain.Entities.Addresses.Address", b =>
                 {
                     b.HasOne("GrowStore.Domain.Entities.User", null)
@@ -321,36 +196,8 @@ namespace GrowStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Products.Product", b =>
-                {
-                    b.HasOne("GrowStore.Domain.Entities.Categories.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Products.ProductVariant", b =>
-                {
-                    b.HasOne("GrowStore.Domain.Entities.Products.Product", "Product")
-                        .WithMany("Variants")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("GrowStore.Domain.Entities.Products.Product", b =>
-                {
-                    b.Navigation("Variants");
-                });
 #pragma warning restore 612, 618
         }
     }
 }
-
 

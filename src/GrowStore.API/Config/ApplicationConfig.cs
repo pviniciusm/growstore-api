@@ -3,6 +3,8 @@ using GrowStore.Application.Auth.Interfaces;
 using GrowStore.Application.Auth.Services;
 using GrowStore.Application.Categories.Interfaces;
 using GrowStore.Application.Categories.Services;
+using GrowStore.Application.Addresses.Interfaces;
+using GrowStore.Application.Addresses.Services;
 using GrowStore.Application.Products.Interfaces;
 using GrowStore.Application.Products.Services;
 using GrowStore.Application.Users.Interfaces;
@@ -20,6 +22,7 @@ namespace GrowStore.API.Config
             services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IProductService, ProductService>();
 
             // Automatically registers all validators from the Application assembly
@@ -29,3 +32,5 @@ namespace GrowStore.API.Config
         }
     }
 }
+
+
